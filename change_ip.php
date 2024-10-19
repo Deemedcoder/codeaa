@@ -11,11 +11,12 @@ $current_ip = getCurrentIpAddress();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $ip_address = $_POST['ip_address'];
+    $mode = $_POST['mode']; // Get mode selection
 
     // Send data to Flask API
     $url = "http://localhost:5000/change_ip"; // Replace with your Flask server's IP
 
-    $data = json_encode(array("ip_address" => $ip_address));
+    $data = json_encode(array("ip_address" => $ip_address, "mode" => $mode));
 
     $options = array(
         'http' => array(
@@ -125,12 +126,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             background-color: #0056b3;
         }
     </style>
+    <script>
+        function toggleInput() {
+            const modeSelect = document.getElementById('mode');
+            const ipInput = document.getElementById('ip_address');
+            ipInput.disabled = (modeSelect.value === 'dhcp');
+        }
+    </script>
 </head>
 <body>
     <div class="container">
         <h1>Change IP Address</h1>
         <div class="current-ip">Current IP Address: <strong><?php echo $current_ip; ?></strong></div>
         <form method="post" action="">
+            <label for="mode">Select Mode:</label>
+            <select id="mode" name="mode" onchange="toggleInput()">
+                <option value="static">Static</option>
+                <option value="dhcp">DHCP</option>
+            </select>
             <label for="ip_address">New IP Address:</label>
             <input type="text" id="ip_address" name="ip_address" required placeholder="Enter new IP address">
             <input type="submit" value="Update IP">
